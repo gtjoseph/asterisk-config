@@ -3,3 +3,4 @@
 .tern-project
 .settings
 test
+*.log
