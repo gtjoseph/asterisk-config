@@ -12,87 +12,90 @@ module.exports.getConfigAMI = getConfigAMI;
 module.exports.getConfigLocal = getConfigLocal;
 
 function trimStrings(a) {
-	for(var i=0; i < a.length ; i++ ){
-		a[i] = a[i].trim();
-	}
+  for (var i = 0; i < a.length; i++) {
+    a[i] = a[i].trim();
+  }
 };
 
 function applyexisting(ctx, nvp, params) {
-	dhs = params.duphandlers;
-	/* If there's no dup handler, just assign/overwrite */
-	if (!(dh = dhs[nvp[1]])) {
-		ctx.vars[nvp[1]] = nvp[2];
-		return;
-	}
-	
-	var existing = ctx.vars[nvp[1]];
-	if (!existing) {
-		if (dh === 'array') {
-			ctx.vars[nvp[1]] = [].concat(nvp[2]); 
-		} else {
-			ctx.vars[nvp[1]] = nvp[2];
-		}
-		return;
-	}
-	
-	if ( dh === 'array') {
-		ctx.vars[nvp[1]] = existing.concat(nvp[2]); 
-	} else {
-		ctx.vars[nvp[1]] = existing + dh + nvp[2];
-	}
+  dhs = params.duphandlers;
+  /* If there's no dup handler, just assign/overwrite */
+  if (!(dh = dhs[nvp[1]])) {
+    ctx.vars[nvp[1]] = nvp[2];
+    return;
+  }
+
+  var existing = ctx.vars[nvp[1]];
+  if (!existing) {
+    if (dh === 'array') {
+      ctx.vars[nvp[1]] = [].concat(nvp[2]);
+    } else {
+      ctx.vars[nvp[1]] = nvp[2];
+    }
+    return;
+  }
+
+  if (dh === 'array') {
+    ctx.vars[nvp[1]] = existing.concat(nvp[2]);
+  } else {
+    ctx.vars[nvp[1]] = existing + dh + nvp[2];
+  }
 };
 
-function parseAMI(err, response, cb, params) {
-	var obj = {};
-	var ctx_name = '';
-	params = params || {};
-	
-	for (var l in response) {
-		mm = l.match(/category-(\d+)/);
-		if (mm) {
-			ctx_name = response[l];
-			var ctx = {};
-			obj[ctx_name] = ctx;
-			ctx.istemplate = 0;
-			ctx.templates = [];
-			if (params.varsAsArray) {
-				ctx.vars = [];
-			} else {
-				ctx.vars = {};
-			}
-			continue;
-		}
-		if (l.match(/line-(\d+)/)) {
-			var ctx = obj[ctx_name];
-			var nvp = response[l].match(/([^ =]+)=(.+)/);
-			if (nvp && nvp.length >= 3) {
-				if (params.varsAsArray) {
-					ctx.vars.push(nvp[1]+'='+nvp[2]);
-				}else {
-					applyexisting(ctx,nvp,params);
-				}
-			}
-			continue;
-		}
-		if ((attr = l.match(/(.+)-(\d+)/))) {
-			var ctx = obj[ctx_name];
-			ctx[attr[1]] = response[l];
-			continue;
-		}
-	}
-	cb(obj);
+function parseAMI(response, params) {
+  var obj = {};
+  var ctx_name = '';
+
+  for ( var l in response) {
+    mm = l.match(/category-(\d+)/);
+    if (mm) {
+      ctx_name = response[l];
+      var ctx = {};
+      obj[ctx_name] = ctx;
+      ctx.istemplate = 0;
+      ctx.templates = [];
+      if (params.varsAsArray) {
+        ctx.vars = [];
+      } else {
+        ctx.vars = {};
+      }
+      continue;
+    }
+    if (l.match(/line-(\d+)/)) {
+      var ctx = obj[ctx_name];
+      var nvp = response[l].match(/([^ =]+)=(.+)/);
+      if (nvp && nvp.length >= 3) {
+        if (params.varsAsArray) {
+          ctx.vars.push(nvp[1] + '=' + nvp[2]);
+        } else {
+          console.log(ctx);
+          applyexisting(ctx, nvp, params);
+        }
+      }
+      continue;
+    }
+    if ((attr = l.match(/(.+)-(\d+)/))) {
+      var ctx = obj[ctx_name];
+      ctx[attr[1]] = response[l];
+      continue;
+    }
+  }
+  return obj;
 };
 
 function getConfigAMI(ami, filename, cb, params) {
-	var parms = {'action': 'getconfig',
-			'filename': filename,
-			'category': params ? params.category : '',
-			'filter': params ? params.filter : ''
-		};
-	
-	ami.action(parms, function(err, response){
-			parseAMI(err, response, cb, params);
-		});
+  var params = params || {};
+  params.action = 'getconfig';
+  params.filename = filename;
+  params.duphandlers = params.duphandlers || {};
+
+  ami.action(params, function(err, response) {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+    cb(null, parseAMI(response, params));
+  });
 };
 
 function parseLine(file, lr, obj, curr_ctx, line, params) {
@@ -202,22 +205,23 @@ function parseLine(file, lr, obj, curr_ctx, line, params) {
 }
 
 function getConfigLocal(filename, cb, params) {
+  var file = {filename: filename, lineno: 0};
 	var lr = new lbl(filename);
 	var obj = {};
 	var curr_ctx = '';
-	if (!params) params = {duphandlers:{}};
-	var file = {filename: filename, lineno: 0};
+  var params = params || {};
+  params.duphandlers = params.duphandlers || {};
 	
 	lr.on('line', function(line) {
 		try {
 			curr_ctx = parseLine(file, lr, obj, curr_ctx, line, params);
 		} catch (err) {
 			console.log(err);
-			cb(null);
+			cb(err, null);
 		}
 	});	
 	lr.on('end', function(line) {
-		cb(obj);
+		cb(null, obj);
 		lr.close();
 	});	
 };
