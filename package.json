@@ -15,7 +15,8 @@
   },
   "keywords": [
     "asterisk",
-    "ami"
+    "ami",
+    "ari"
   ],
   "author": "Fairview 5 Engineering, LLC <developers@fairview5.com>",
   "license": "MIT",

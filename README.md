@@ -2,7 +2,7 @@
 
 # asterisk-config
 
-An Asterisk config file parser that processes templates, includes, and additions.  Can be used via AMI or on local files.
+An Asterisk config file parser that processes templates, includes, and section additions.  Can be used via AMI or on local files.
 
 ## Install
 
@@ -34,6 +34,7 @@ var cb = function(err, obj) {
 
 var ami = new am('5038','localhost','astadmin','yourpassword', false);
 
+/* Call remotely via AMI */
 ac.getConfigAMI(ami, 'test.conf', cb,
 	{ 	varsAsArray:false,
 		filter: "TEMPLATES=include",
@@ -43,6 +44,7 @@ ac.getConfigAMI(ami, 'test.conf', cb,
 			'match': 'array'
 		}});
 
+/* Call directly on local file */
 ac.getConfigLocal('/etc/asterisk/test.conf', cb,
 	{	varsAsArray:false,
 		duphandlers: {
@@ -62,9 +64,9 @@ ac.getConfigLocal('/etc/asterisk/test.conf', cb,
 * **options**: Optional parameters object
  * **category**: The name of the category to retrieve.  If not specified, all categories in the file
  will be returned.
- * **filter**:  The GetConfig AMI command (which this method uses) can take a `filter` argument to further control 
- what categories are returned.  Since GetConfig doesn't return templates by default, you'll might want 
- 'filter: 'TEMPLATES=include'`.  See the documentation for GetConfig (`manager show command GetConfig`) for more
+ * **filter**:  The **GetConfig** AMI command (which this method uses) can take a `filter` argument to further control 
+ what categories are returned.  Since **GetConfig** doesn't return templates by default, you might want 
+ `filter: 'TEMPLATES=include'`.  See the documentation for **GetConfig** (`manager show command GetConfig`) for more
  information.
  * **varsAsArray**:  If `false` (the default), each categories' lines will be parsed into a name/value pair object.
  This presents problems when parsing files like extensions.conf where all of the variable names are `exten` or `include`, etc..
@@ -105,7 +107,7 @@ allow = gsm
 ```
 using:
 ```
-ac.getConfigLocal('test.conf, cb,
+ac.getConfigLocal('test.conf', cb,
 	{	varsAsArray:false,
 		duphandlers: {
 			'allow': ',',
@@ -166,7 +168,7 @@ match = 192.168.0.99
 
 using:
 ```
-ac.getConfigLocal('test.conf, cb,
+ac.getConfigLocal('test.conf', cb,
 	{	varsAsArray:false,
 		duphandlers: {
 			'allow': ',',
