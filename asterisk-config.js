@@ -68,7 +68,6 @@ function parseAMI(response, params) {
         if (params.varsAsArray) {
           ctx.vars.push(nvp[1] + '=' + nvp[2]);
         } else {
-          console.log(ctx);
           applyexisting(ctx, nvp, params);
         }
       }
