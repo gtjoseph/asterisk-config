@@ -189,7 +189,7 @@ function parseLine(file, lr, obj, curr_ctx, line, params) {
 		obj[ctx_name] = ctx;
 		curr_ctx = ctx_name;
 	} else {
-		nvp = line.match(/\s*([^= ]+)\s*=\s*(.*)/);
+		nvp = line.match(/\s*([^= ]+)\s*=>?\s*(.*)/);
 		if (!nvp) {
 			throw util.format("%s:%d: %s", file.filename, file.lineno, 'Malforned line: '+line);
 		}
