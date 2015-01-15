@@ -1,6 +1,7 @@
 
 
-# asterisk-config
+# asterisk-config [![Total views](https://sourcegraph.com/api/repos/github.com/f5eng/asterisk-config/.counters/views.png)](https://sourcegraph.com/github.com/f5eng/asterisk-config) [![NPM](https://nodei.co/npm/asterisk-config.png)](https://nodei.co/npm/asterisk-config/)  
+
 
 An Asterisk config file parser that processes templates, includes, and section additions.  Can be used via AMI or on local files.
 
