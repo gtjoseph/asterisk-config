@@ -89,6 +89,8 @@ ac.getConfigLocal('/etc/asterisk/test.conf', cb,
 * **options**: Optional parameters object
  * **varsAsArray**:  See above
  * **duphandlers**:  See above
+ * **suppressInheritance**:  If set to `true`, properties from templates will not be interited.  The `templates`
+ array will still be populated if you wish to do your own inheritance processing.
  
 ## Sample Input/Output
 
