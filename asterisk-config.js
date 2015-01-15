@@ -114,7 +114,7 @@ function parseLine(file, lr, obj, curr_ctx, line, params) {
     line = mm[1];
   }
 
-  if ((mm = line.match(/#include (.*)/))) {
+  if ((mm = line.match(/#include ["]?([^"]+)["]?/))) {
     var newfile = mm[1];
     var newpath = path.resolve(path.dirname(file.filename), newfile);
     var matches = glob.sync(newpath);
@@ -181,20 +181,26 @@ function parseLine(file, lr, obj, curr_ctx, line, params) {
     } else {
       ctx.vars = {};
     }
-    ctx.templates.forEach(function(t, i) {
-      var tctx = obj[t];
-      if (!tctx) {
-        throw util.format("%s:%d: %s", file.filename, file.lineno,
-            'Template not found: ' + t);
-      }
-      if (params.varsAsArray) {
-        ctx.vars = ctx.vars.concat(tctx.vars);
-      } else {
-        for ( var v in tctx.vars) {
-          applyexisting(ctx, [ 0, v, tctx.vars[v] ], params);
+
+    if (!params.suppressInheritance) {
+      ctx.templates.forEach(function(t, i) {
+        var tctx = obj[t];
+        if (!tctx) {
+          throw util.format("%s:%d: %s", file.filename, file.lineno,
+              'Template not found: ' + t);
         }
-      }
-    });
+        if (params.varsAsArray) {
+          ctx.vars = ctx.vars.concat(tctx.vars);
+        } else {
+          for ( var v in tctx.vars) {
+            if (tctx.vars.hasOwnProperty(v)) {
+              applyexisting(ctx, [ 0, v, tctx.vars[v] ], params);
+            }
+          }
+        }
+      });
+    }
+
     obj[ctx_name] = ctx;
     curr_ctx = ctx_name;
   } else {
