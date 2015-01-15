@@ -1,6 +1,6 @@
 {
   "name": "asterisk-config",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Asterisk Config File Reader with Template and #include support",
   "main": "asterisk-config.js",
   "files": [
@@ -8,10 +8,10 @@
     "README.md",
     "LICENSE",
     "package.json"
-   ],
+  ],
   "repository": {
-    "type" : "git",
-    "url" : "http://github.com/f5eng/asterisk-config.git"
+    "type": "git",
+    "url": "http://github.com/f5eng/asterisk-config.git"
   },
   "keywords": [
     "asterisk",
@@ -21,7 +21,7 @@
   "author": "Fairview 5 Engineering, LLC <developers@fairview5.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "bugs": { 
+  "bugs": {
     "url": "http://github.com/f5eng/asterisk-config/issues",
     "email": "developers@fairview5.com"
   },
