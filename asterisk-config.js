@@ -5,12 +5,12 @@ var Category = require('./lib/category');
 
 function getConfigAMI(ami, filename, cb, params) {
   var c = new ConfigAMI(ami, filename, params);
-  c.parse(cb);
+  c.read(cb);
 }
 
 function getConfigLocal(filename, cb, params) {
   var c = new ConfigFile(filename, params);
-  c.parse(cb);
+  c.read(cb);
 }
 
 module.exports.getConfigAMI = getConfigAMI;

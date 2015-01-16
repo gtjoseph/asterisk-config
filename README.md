@@ -128,7 +128,7 @@ __Properties__
  * ___Category...___ - The rest of this objects enumerable properties are __Category__ objects keyed by their names.
  
 __Methods__
- * __parse(*callback(error, configFile)*)__ - Does the actual parsing and calls the callback with an error or this
+ * __read(*callback(error, configFile)*)__ - Does the actual parsing and calls the callback with an error or this
  __ConfigFile__ object. 
 
 ### ConfigAMI(*ami*, *fileName* [ , *params* ])
@@ -145,24 +145,23 @@ __Constructor__
    * ___filter___:  Also limits the results.  For more information, run `manager show command GetConfig`
    in the Asterisk CLI.
     
-__Properties__
+__Properties__ 
  * ___fileName___ - The root file this object represents. (non-enumerable)
  * ___params___ - The parameters object used in the constructor. (non-enumerable)
  * ___Category...___ - The rest of this objects enumerable properties are __Category__ objects keyed by their names.
  
 __Methods__
- * __parse(*callback(error, configFile)*)__ - Does the actual parsing and calls the callback with an error or this
+ * __read(*callback(error, configFile)*)__ - Does the actual parsing and calls the callback with an error or this
  __ConfigAMI__ object. 
 
 ### asterisk-config
 
 __Methods__
- * __getConfigLocal(*fileName*, *callback* [ , *parameters* ])__ - A wrapper around `new ConfigAMI(...)` and
- `parse(...)`. 
- * __getConfigAMI(*ami*, *fileName*, *callback* [ , *parameters* ])__ - A wrapper around `new ConfigFileI(...)` and
- `parse(...)`. 
- 
- 
+ * __getConfigLocal(*fileName*, *callback* [ , *parameters* ])__ - A wrapper around `new ConfigFile(...)` and
+ `read(...)`. 
+ * __getConfigAMI(*ami*, *fileName*, *callback* [ , *parameters* ])__ - A wrapper around `new ConfigAMI(...)` and
+ `read(...)`. 
+  
 <a name='samples'/>
 ## Sample Input/Output
 
